@@ -6,6 +6,7 @@ resources = [
 fellows = {"F001": "Ada", "F002": "John", "F003": "Grace"}
 borrow_records = []
 
+
 def get_positive_number(prompt):
     while True:
         try:
@@ -16,22 +17,14 @@ def get_positive_number(prompt):
         except ValueError:
             print("Please enter a whole number, for example 5.")
 
-def borrow_resource(fellow_id, resource_id,quantity):
-    if fellow_id not in fellows:
-        print("error.....")
-        return
-    resource = find_resource(resource_id)
-        
-    if resource is None:
-        
-        print("error....")
-        return
-    if quantity > resource["available"]:
-        print("error.")
-        return
-    resource["available"] = resource["available"] - quantity
-    borrow_records.append({"fellow":fellow_id,"resource":resource_id,"quantity":quantity})
-    print("success..")
+
+def find_resource(looking_for):
+    looking_for = looking_for.strip().upper()
+    for resource in resources:
+        if resource["id"] == looking_for:
+            return resource
+    return None
+
 
 def get_loaned(fellow_id, resource_id):
     held = 0
@@ -40,31 +33,53 @@ def get_loaned(fellow_id, resource_id):
             held = held + record["quantity"]
     return held
 
+
 def borrow_resource(fellow_id, resource_id, quantity):
     fellow_id = fellow_id.strip().upper()
     if fellow_id not in fellows:
-        print("Fellow ID not found:", fellow_id)
+        print("Rejected: fellow ID not found:", fellow_id)
         return
     resource = find_resource(resource_id)
     if resource is None:
-        print("Resource ID not found:", resource_id)
+        print("Rejected: resource ID not found:", resource_id)
         return
-    if quantity > get_loaned(fellow_id, resource["id"]):
-        print("Rejected: you can only return what you currently hold.")
+    if not isinstance(quantity, int) or quantity <= 0:
+        print("Rejected: quantity must be a whole number greater than 0.")
+        return
+    if quantity > resource["available"]:
+        print("Rejected: only", resource["available"], "unit(s) of", resource["name"], "available.")
+        return
+    resource["available"] = resource["available"] - quantity
+    borrow_records.append({"fellow": fellow_id, "resource": resource["id"], "quantity": quantity})
+    print("Success:", fellows[fellow_id], "borrowed", quantity, resource["name"])
+
+
+def return_resource(fellow_id, resource_id, quantity):
+    fellow_id = fellow_id.strip().upper()
+    if fellow_id not in fellows:
+        print("Rejected: fellow ID not found:", fellow_id)
+        return
+    resource = find_resource(resource_id)
+    if resource is None:
+        print("Rejected: resource ID not found:", resource_id)
+        return
+    if not isinstance(quantity, int) or quantity <= 0:
+        print("Rejected: quantity must be a whole number greater than 0.")
+        return
+    held = get_loaned(fellow_id, resource["id"])
+    if quantity > held:
+        print("Rejected:", fellows[fellow_id], "holds only", held, resource["name"], "- cannot return", quantity)
         return
     resource["available"] = resource["available"] + quantity
     borrow_records.append({"fellow": fellow_id, "resource": resource["id"], "quantity": -quantity})
-    print("Return successful.")
+    print("Success:", fellows[fellow_id], "returned", quantity, resource["name"])
+
+
 def list_resources():
     for resource in resources:
-        print(resource["id"],resource["name"],resource["category"],resource["total"],resource["available"])
-def find_resource(looking_for):
-    looking_for = (looking_for.strip().upper())
-    for resource in resources:
-        if resource["id"] == looking_for:
-            return resource
-    return None
-borrow_resource("F001", "R001", 2)
+        print(resource["id"], resource["name"], resource["category"], resource["total"], resource["available"])
+
+
 print("Step 1: F001 borrows 2 laptops")
 borrow_resource("F001", "R001", 2)
 print(find_resource("R001"))
