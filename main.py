@@ -40,7 +40,8 @@ def get_loaned(fellow_id, resource_id):
             held = held + record["quantity"]
     return held
 
-def return_resource(fellow_id, resource_id, quantity):
+def borrow_resource(fellow_id, resource_id, quantity):
+    fellow_id = fellow_id.strip().upper()
     if fellow_id not in fellows:
         print("Fellow ID not found:", fellow_id)
         return
@@ -64,8 +65,22 @@ def find_resource(looking_for):
             return resource
     return None
 borrow_resource("F001", "R001", 2)
+print("Step 1: F001 borrows 2 laptops")
+borrow_resource("F001", "R001", 2)
 print(find_resource("R001"))
+
+print("Step 2: F002 borrows 3 keyboards")
 borrow_resource("F002", "R002", 3)
 print(find_resource("R002"))
+
+print("Step 3: F001 returns 1 laptop")
 return_resource("F001", "R001", 1)
 print(find_resource("R001"))
+
+print("Step 4: F003 requests 4 headsets")
+borrow_resource("F003", "R003", 4)
+print(find_resource("R003"))
+
+print("Step 5: F002 tries to return 4 keyboards")
+return_resource("F002", "R002", 4)
+print(find_resource("R002"))
