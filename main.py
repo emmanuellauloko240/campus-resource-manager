@@ -25,6 +25,7 @@ def get_positive_number(prompt):
 def find_resource(looking_for):
     looking_for = clean_id(looking_for)
     for resource in resources:
+
         if resource["id"] == looking_for:
             return resource
     return None
@@ -140,7 +141,7 @@ def generate_report():
         available_units = available_units + resource["available"]
     borrowed_units = total_units - available_units
 
-    print("===== INVENTORY REPORT =====")
+    print("INVENTORY REPORT")
     print("Total units:     ", total_units)
     print("Available units: ", available_units)
     print("Borrowed units:  ", borrowed_units)
@@ -201,7 +202,7 @@ def run_demo():
 
 def main():
     while True:
-        print("\n===== Learn2Earn Resource Manager =====")
+        print("\nLearn2Earn Resource Manager")
         print("1. Add resource")
         print("2. List resources")
         print("3. Borrow resource")
